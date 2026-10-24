@@ -1,0 +1,11 @@
+name: cloud_usage_analytics
+version: "1.0.0"
+profile: cloud_usage_analytics
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+
+models:
+  cloud_usage_analytics:
+    staging:
+      +materialized: view

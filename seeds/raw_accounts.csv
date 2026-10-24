@@ -1,0 +1,4 @@
+account_id,account_name,signup_date,region,plan
+A001, Acme Robotics ,2025-03-14,us-east,Essentials
+A002,Bluefin Labs,2025-06-02,eu-west,Business
+A003,Cargo Systems,2025-09-21,us-west,essentials
