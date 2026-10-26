@@ -13,3 +13,8 @@ models:
           - accepted_values:
               arguments:
                 values: ['essentials', 'business', 'enterprise']
+      - name: region
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['us-east', 'us-west', 'eu-west', 'ap-south']

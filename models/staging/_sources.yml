@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Raw tables written by generator/generate_data.py
+    tables:
+      - name: accounts
+      - name: plan_changes
+      - name: namespaces
+      - name: daily_usage
+      - name: invoices
