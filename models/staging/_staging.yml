@@ -18,3 +18,17 @@ models:
           - accepted_values:
               arguments:
                 values: ['us-east', 'us-west', 'eu-west', 'ap-south']
+  - name: stg_namespaces
+    description: One row per namespace (a customer environment).
+    columns:
+      - name: namespace_id
+        data_tests:
+          - unique
+          - not_null
+      - name: account_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_accounts')
+                field: account_id
