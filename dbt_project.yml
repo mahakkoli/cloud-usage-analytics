@@ -9,3 +9,5 @@ models:
   cloud_usage_analytics:
     staging:
       +materialized: view
+    core:
+      +materialized: table
