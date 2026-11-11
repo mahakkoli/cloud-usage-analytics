@@ -1,0 +1,45 @@
+# Governed metric definitions. Every metric is defined once, here.
+# The agent can only get numbers through these definitions.
+
+table: mart_account_monthly
+time_column: month
+dimensions:
+  plan: Plan the account was billed on that month (essentials, business, enterprise)
+  region: Customer region (us-east, us-west, eu-west, ap-south)
+  signup_month: Month the account signed up (for cohort analysis)
+
+metrics:
+  - name: revenue
+    label: Revenue (USD)
+    description: Total invoiced revenue.
+    sql: sum(revenue_usd)
+
+  - name: billable_actions
+    label: Billable actions
+    description: Total actions customers ran on the platform (a flow, so it sums).
+    sql: sum(actions)
+
+  - name: active_accounts
+    label: Active accounts
+    description: Accounts with an invoice in the period, meaning they used the product.
+    sql: count(distinct account_id)
+
+  - name: active_namespaces
+    label: Active namespaces
+    description: Namespaces with at least one action in the month, summed across accounts.
+    sql: sum(active_namespaces)
+
+  - name: revenue_per_active_account
+    label: Revenue per active account (USD)
+    description: Revenue divided by active accounts.
+    sql: sum(revenue_usd) / count(distinct account_id)
+
+  - name: avg_storage_gb
+    label: Average storage per account (GB)
+    description: Average of each account's monthly average storage (a level, so it averages, never sums).
+    sql: avg(avg_storage_gb)
+
+  - name: new_accounts
+    label: New accounts
+    description: Accounts whose signup month falls in the period.
+    sql: count(distinct case when month = signup_month then account_id end)
