@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cloud-usage-metrics": {
+      "command": "/Users/mahakkoli/Desktop/cloud-usage-analytics/.venv/bin/python",
+      "args": ["/Users/mahakkoli/Desktop/cloud-usage-analytics/agent/server.py"]
+    }
+  }
+}
