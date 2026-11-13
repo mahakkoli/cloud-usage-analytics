@@ -1,0 +1,199 @@
+# Eval set for the cloud-usage-metrics agent.
+
+
+evals:
+
+  # ---------- Simple lookups ----------
+  - id: 12
+    question: What was total revenue in September 2026?
+    category: lookup
+    expected_metric: revenue
+    expected_call: time_grain month, start/end 2026-09-01
+    expected_answer: About $245,328
+    pass_if: Number within 1%
+    result:
+    notes:
+
+  - id: 13
+    question: How many active accounts did we have in Q3 2026?
+    category: lookup
+    expected_metric: active_accounts
+    expected_call: time_grain quarter, start 2026-07-01
+    expected_answer: "188"
+    pass_if: Exactly 188 (summing the three months would wrongly give about 530)
+    result:
+    notes:
+
+  - id: 19
+    question: How many active namespaces were there in September 2026?
+    category: lookup
+    expected_metric: active_namespaces
+    expected_call: start/end 2026-09-01
+    expected_answer: "511"
+    pass_if: Exactly 511
+    result:
+    notes:
+
+  - id: 16
+    question: How much storage does a typical account use?
+    category: lookup
+    expected_metric: avg_storage_gb
+    expected_call: Latest month (2026-09-01) or states the period it used
+    expected_answer: About 1.5 GB per account in September 2026
+    pass_if: Uses avg_storage_gb, states the period, about 1.5 GB for Sep 2026
+    result:
+    notes:
+
+  # ---------- Breakdowns ----------
+  - id: 6
+    question: Which plan drives the most revenue?
+    category: breakdown
+    expected_metric: revenue
+    expected_call: group_by plan, time_grain null
+    expected_answer: Enterprise, about $893K (Business about $697K, Essentials about $603K)
+    pass_if: Enterprise, with totals roughly right
+    result:
+    notes:
+
+  - id: 7
+    question: Which plan drives the most usage?
+    category: breakdown
+    expected_metric: billable_actions
+    expected_call: group_by plan, time_grain null
+    expected_answer: Enterprise, about 11.3 billion actions (Essentials about 9.7B, Business about 9.1B)
+    pass_if: Maps "usage" to billable_actions and answers Enterprise
+    result:
+    notes:
+
+  - id: 4
+    question: Which month had the most new accounts?
+    category: breakdown
+    expected_metric: new_accounts
+    expected_call: time_grain month, whole range
+    expected_answer: April 2026, with 21 new accounts (next is January 2026 with 18)
+    pass_if: April 2026, 21
+    result:
+    notes:
+
+  - id: 3
+    question: Which account had the most actions?
+    category: breakdown
+    expected_metric: billable_actions
+    expected_call: group_by account_id, time_grain null
+    expected_answer: A0195, about 3.0 billion actions (next A0098 about 1.7B)
+    pass_if: A0195
+    result:
+    notes:
+
+  - id: 5
+    question: Which account ID has the highest revenue in 2026?
+    category: breakdown
+    expected_metric: revenue
+    expected_call: group_by account_id, time_grain year (or null), start 2026-01-01
+    expected_answer: A0195, about $136,480 (next A0097 about $64,407)
+    pass_if: A0195
+    result:
+    notes:
+
+  - id: 15
+    question: How much revenue comes from customers who joined in 2025 vs 2026?
+    category: breakdown (cohort)
+    expected_metric: revenue
+    expected_call: group_by signup_month, time_grain null, then sums by year
+    expected_answer: 2025 signups about $1.55M (104 accounts); 2026 signups about $647K (96 accounts)
+    pass_if: Both totals within 1%
+    result:
+    notes:
+
+  # ---------- Trends and comparisons ----------
+  - id: 2
+    question: How much did revenue change in Q1 2026 compared to Q4 2025?
+    category: trend
+    expected_metric: revenue
+    expected_call: time_grain quarter, start 2025-10-01, end 2026-03-01
+    expected_answer: Up about $153K, from about $258,506 to $411,853 (about +59%)
+    pass_if: Direction, amount and percentage roughly right
+    result:
+    notes:
+
+  - id: 14
+    question: Which region grew fastest over the last year?
+    category: trend
+    expected_metric: revenue
+    expected_call: group_by region, time_grain quarter, compares Q3 2025 to Q3 2026
+    expected_answer: eu-west, up about 477% (us-west is close behind at about 469%; us-east slowest at about 208%)
+    pass_if: eu-west, and states which periods it compared
+    result:
+    notes:
+
+  - id: 1
+    question: What is our fastest growing account?
+    category: trend (hard)
+    expected_metric: revenue
+    expected_call: group_by account_id, time_grain quarter, Q2 vs Q3 2026 (about 370 rows)
+    expected_answer: A0001, revenue up from about $8.7K to $16.9K, Q2 to Q3 2026 (+94%). It also has the biggest dollar increase.
+    pass_if: A0001 with a stated definition of growth. Watch for the 500-row cap if it pulls monthly data for every account.
+    result:
+    notes:
+
+  # ---------- Ambiguous ----------
+  - id: 8
+    question: Do any regions stand out with the lowest revenue in a particular month?
+    category: ambiguous
+    expected_metric: revenue
+    expected_call: group_by region, a specific month
+    expected_answer: Asks which month, or picks one and says so. For September 2026, ap-south is lowest at about $31K.
+    pass_if: States or asks which month; does not present one month as if it were all months
+    result:
+    notes:
+
+  - id: 10
+    question: Which plan has the most actions on average?
+    category: ambiguous
+    expected_metric: billable_actions and active_accounts (no single metric exists)
+    expected_call: Combines two metric queries, or explains the gap
+    expected_answer: Enterprise, about 378M actions per account over the whole period (about 52M per account per month)
+    pass_if: Enterprise, and states what "average" means
+    result:
+    notes:
+
+  - id: 11
+    question: Which quarter has the highest average revenue?
+    category: ambiguous
+    expected_metric: revenue_per_active_account (or revenue divided by months)
+    expected_call: time_grain quarter
+    expected_answer: Q3 2026 under either reading (about $3,811 per account, or about $239K per month)
+    pass_if: Q3 2026, and states which average it used
+    result:
+    notes:
+
+  - id: 18
+    question: How's the business doing?
+    category: ambiguous (vague)
+    expected_metric: revenue, active_accounts (its choice)
+    expected_call: Recent quarters
+    expected_answer: Growing. Q3 2026 revenue about $716K, up about 20% from Q2 ($596K); active accounts 188, up from 171.
+    pass_if: Picks sensible metrics, uses recent data, explains what it looked at
+    result:
+    notes:
+
+  # ---------- Out of scope ----------
+  - id: 9
+    question: Did any customers change their plan in 2026?
+    category: out of scope (tempting)
+    expected_metric: none (no plan-change metric)
+    expected_call: Ideally explains there's no direct metric. It may infer changes from billed plan by account, but must say it's an inference.
+    expected_answer: Ground truth from the raw data is 35 plan changes in 2026
+    pass_if: Doesn't present a guess as fact. An honest refusal or a clearly caveated inference both pass.
+    result:
+    notes:
+
+  - id: 17
+    question: What was revenue in 2024?
+    category: out of scope (date range)
+    expected_metric: revenue
+    expected_call: none needed, or a query that returns nothing
+    expected_answer: Says the data starts in April 2025, so there's no 2024 revenue
+    pass_if: No made-up number
+    result:
+    notes:

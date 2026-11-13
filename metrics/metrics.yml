@@ -7,6 +7,7 @@ dimensions:
   plan: Plan the account was billed on that month (essentials, business, enterprise)
   region: Customer region (us-east, us-west, eu-west, ap-south)
   signup_month: Month the account signed up (for cohort analysis)
+  account_id: Customer account ID, for questions about individual or top customers
 
 metrics:
   - name: revenue
@@ -43,3 +44,5 @@ metrics:
     label: New accounts
     description: Accounts whose signup month falls in the period.
     sql: count(distinct case when month = signup_month then account_id end)
+
+   
